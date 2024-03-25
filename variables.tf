@@ -4,11 +4,11 @@ variable "region" {
 }
 variable "cron_value" {
   type    = string
-  default = "cron(45 23 * * ? *)"
+  default = "cron(40 10 * * ? *)"
 }
 variable "tag_key" {
   type    = string
-  default = "Group"
+  default = "group"
 }
 variable "tag_value" {
   type    = string

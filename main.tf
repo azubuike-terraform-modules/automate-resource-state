@@ -38,8 +38,8 @@ resource "aws_iam_role_policy" "rds_state_lambda_policy" {
       {
         Action = [
           "rds:DescribeDBClusterParameters",
-          "rds:StartDBCluster",
-          "rds:StopDBCluster",
+          "rds:DeleteDBCluster",
+          "rds:DeleteDBInstance",
           "rds:DescribeDBEngineVersions",
           "rds:DescribeGlobalClusters",
           "rds:DescribePendingMaintenanceActions",
@@ -62,6 +62,11 @@ resource "aws_iam_role_policy" "rds_state_lambda_policy" {
       },
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "rds_state_lambda_basic_execution_role" {
+  role       = aws_iam_role.rds_state_lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 data "archive_file" "lambda" {
   type        = "zip"
@@ -93,5 +98,5 @@ resource "aws_lambda_permission" "with_event_bridge" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.rds_state_lambda.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_target.rds_state_lambda_event_target.arn
+  source_arn    = aws_cloudwatch_event_rule.terminate_rds.arn
 }
